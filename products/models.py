@@ -43,7 +43,7 @@ class Product(models.Model):
     product_type = models.ManyToManyField(ProductType, blank=False, symmetrical=False)
 
     def __str__(self) -> str:
-        return f"{self.name}   //  by {self.manufacturer}"
+        return f"{self.name} // {self.category} // by {self.manufacturer}"
 
     def save(self, *args, **kwargs):
         if self.discount in range(0, 101):

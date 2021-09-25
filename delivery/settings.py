@@ -25,12 +25,16 @@ INSTALLED_APPS = [
     'users',
 
     'rest_framework',
+    'rest_framework.authtoken',
     'corsheaders',
+    'whitenoise',
+    'djoser',
 ]
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -40,6 +44,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'delivery.urls'
+
+AUTH_USER_MODEL = 'users.Customer'
 
 TEMPLATES = [
     {
@@ -86,6 +92,31 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+DJOSER = {
+    'USER_ID_FIELD' : 'username',   # user_id_field allows normal registration and hides user id in url
+    'LOGIN_FIELD' : 'phone',    #login_field makes it possible to log in with email
+
+    'SERIALIZERS' : {
+        #'current_user' : 'users.serializers.DetailUserSerializer',
+        #'user' : 'users.serializers.PartialUserSerializer',
+    },
+    
+    'HIDE_USERS': False,
+    'PERMISSIONS': {
+        #'user': ['rest_framework.permissions.AllowAny'],
+        'username_reset': ['rest_framework.permissions.IsAdminUser'],
+        'username_reset_confirm': ['rest_framework.permissions.IsAdminUser'],
+        'user_list' : ['rest_framework.permissions.IsAdminUser'],
+    },
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+}
+
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -98,5 +129,8 @@ USE_TZ = True
 
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
