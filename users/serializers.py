@@ -1,3 +1,4 @@
+from django.db import models
 import products
 from django.db.models import fields
 from products.serializers import ProductSerializer
@@ -15,7 +16,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
-        fields = ('phone',)
+        fields = ('username',)
 
 
 class CartSerializer(serializers.ModelSerializer):
@@ -24,3 +25,9 @@ class CartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cart
         fields = ('customer', 'unique_id', 'products')
+
+
+class ProcessedCartSerializer(CartSerializer):
+    class Meta:
+        model = Cart
+        fields = CartSerializer.Meta.fields + ('is_processed', 'processing_date',)

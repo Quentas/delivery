@@ -94,7 +94,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 DJOSER = {
     'USER_ID_FIELD' : 'username',   # user_id_field allows normal registration and hides user id in url
-    'LOGIN_FIELD' : 'phone',    #login_field makes it possible to log in with email
+    'LOGIN_FIELD' : 'username',    #login_field makes it possible to log in with email or phone
 
     'SERIALIZERS' : {
         #'current_user' : 'users.serializers.DetailUserSerializer',

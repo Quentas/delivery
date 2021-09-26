@@ -36,7 +36,7 @@ class Manufacturer(models.Model):
 class Product(models.Model):
     name = models.CharField(blank=False, max_length=50)
     description = models.TextField(blank=False, max_length=300)
-    discount = models.IntegerField(blank=True, verbose_name='Discount, in %', default=0)
+    discount = models.PositiveSmallIntegerField(blank=True, verbose_name='Discount, in %', default=0)
     manufacturer = models.ForeignKey(Manufacturer, on_delete=DO_NOTHING, blank=False)
     category = models.ForeignKey(Category, on_delete=DO_NOTHING, blank=False)
     photo = models.TextField(blank=False, max_length=500)
