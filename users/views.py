@@ -32,16 +32,17 @@ class CartViewSet(ViewSet):
         item_id = int(request.data['id'])
         product = get_object_or_404(Product, id=item_id)
         quantity = int(request.data['quantity'])
-        #product_type = request.data['type']
-        
+        item_type = int(request.data['type']) # receives only 'weight' of the product
+        item_type = get_object_or_404(product.product_type.all(), weight=item_type)
+
         # Checks if this order item is already in cart. If so, increases its quantity by incoming quantity
         # Otherwise adds this product as new OrderItem
-        if item_id in [x.item.id for x in user_cart.products.all()]:
-            increase_quantity_in = user_cart.products.get(item__id=item_id)
-            increase_quantity_in.quantity = increase_quantity_in.quantity + quantity
-            increase_quantity_in.save()
+        if item_id in [x.item.id for x in user_cart.products.all()] and item_type in [y.item_type for y in user_cart.products.all()]:
+            increase_quantity_here = user_cart.products.get(item__id=item_id, item_type=item_type)
+            increase_quantity_here.quantity = increase_quantity_here.quantity + quantity
+            increase_quantity_here.save()
         else:
-            orderitem = OrderItem.objects.create(item = product, quantity = quantity)
+            orderitem = OrderItem.objects.create(item=product, quantity=quantity, item_type=item_type)
             user_cart.products.add(orderitem)
             user_cart.save()
 
@@ -50,11 +51,8 @@ class CartViewSet(ViewSet):
     def remove_from_cart(self, request):
         '''Removes items from cart
         '''
+        user_cart = Cart.objects.filter(customer = request.user).order_by('-id')[0]
 
-
-        queryset, created = Cart.objects.filter(
-            Q (is_processed = False)).get(customer = request.user)
-        
         pass
 
     def delete(self, request):

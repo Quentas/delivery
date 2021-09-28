@@ -1,13 +1,14 @@
 from django.db import models
 import products
 from django.db.models import fields
-from products.serializers import ProductSerializer
+from products.serializers import ProductSerializer, ProductTypeSerializer
 from rest_framework import serializers
 from .models import OrderItem, Cart, Customer
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
     item = ProductSerializer()
+    item_type = ProductTypeSerializer()
     class Meta:
         model = OrderItem
         fields = ('item', 'quantity', 'item_type',)
