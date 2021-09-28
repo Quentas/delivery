@@ -37,7 +37,10 @@ class CartViewSet(ViewSet):
 
         # Checks if this order item is already in cart. If so, increases its quantity by incoming quantity
         # Otherwise adds this product as new OrderItem
-        if item_id in [x.item.id for x in user_cart.products.all()] and item_type in [y.item_type for y in user_cart.products.all()]:
+        if (
+            item_id in [x.item.id for x in user_cart.products.all()] and 
+            item_type in [y.item_type for y in user_cart.products.all()]
+            ):
             increase_quantity_here = user_cart.products.get(item__id=item_id, item_type=item_type)
             increase_quantity_here.quantity = increase_quantity_here.quantity + quantity
             increase_quantity_here.save()
