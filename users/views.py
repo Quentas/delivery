@@ -2,11 +2,10 @@ from django.shortcuts import render
 from .serializers import *
 from .models import *
 from django.db.models import Q
-from django.views import View
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponseRedirect, JsonResponse
 from django.db import transaction
 from rest_framework.viewsets import ViewSet, ModelViewSet
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.response import Response
 from rest_framework.permissions import (
     IsAuthenticated,
@@ -26,7 +25,8 @@ class CartViewSet(ViewSet):
 
     @transaction.atomic
     def add_to_cart(self, request):
-        '''Adds items to cart
+        '''Adds items to cart, if 'quantity' parameter is positive.
+            Otherwise removes it from cart
         '''
         user_cart = Cart.objects.filter(customer = request.user).order_by('-id')[0]
         item_id = int(request.data['id'])
@@ -51,20 +51,30 @@ class CartViewSet(ViewSet):
 
         return Response(status=200)
 
-    def remove_from_cart(self, request):
-        '''Removes items from cart
-        '''
-        user_cart = Cart.objects.filter(customer = request.user).order_by('-id')[0]
-
-        pass
-
+    @transaction.atomic
     def delete(self, request):
-        '''Completely removes cart
+        '''Completely removes cart and all linked orderItems and creates new empty cart
         '''
-        pass
+        response = 1
+        try:
+            user_cart = Cart.objects.get(customer=request.user, is_processed=False)
+            for item in user_cart.products.all():
+                item.delete()            
+            user_cart.delete()
+            Cart.objects.create(customer=request.user)
+            response = Response({'deleting':'Delete success. Created new cart for this user'}, status=200)    
+        except ObjectDoesNotExist:
+            Cart.objects.create(customer=request.user)
+            response = Response(status=204)
+        return response
 
     def process(self, request):
         '''Sends cart to processing. If successful, marks as 
             'is_processed=True' and creates new empty cart
         '''
+        final_price = 0
+        user_cart = Cart.objects.get(customer=request.user, is_processed=False)
+        for item in user_cart.products.all():
+            pass
+
         pass

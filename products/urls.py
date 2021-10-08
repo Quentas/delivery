@@ -10,4 +10,5 @@ urlpatterns = [
     path('cat_list/', CategotyViewSet.as_view({
         'get' : 'get_categories',
     })),
+
 ]

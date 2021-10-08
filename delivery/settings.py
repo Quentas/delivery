@@ -23,12 +23,14 @@ INSTALLED_APPS = [
     
     'products',
     'users',
+    'navigation',
 
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
     'whitenoise',
     'djoser',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [

@@ -17,7 +17,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
-        fields = ('username',)
+        fields = ('username', 'first_name', 'last_name',)
 
 
 class CartSerializer(serializers.ModelSerializer):
@@ -25,7 +25,7 @@ class CartSerializer(serializers.ModelSerializer):
     products = OrderItemSerializer(many=True)
     class Meta:
         model = Cart
-        fields = ('customer', 'unique_id', 'products')
+        fields = ('customer', 'unique_id', 'is_processed','products')
 
 
 class ProcessedCartSerializer(CartSerializer):
