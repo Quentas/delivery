@@ -68,13 +68,42 @@ class CartViewSet(ViewSet):
             response = Response(status=204)
         return response
 
+    @transaction.atomic
     def process(self, request):
         '''Sends cart to processing. If successful, marks as 
             'is_processed=True' and creates new empty cart
         '''
         final_price = 0
         user_cart = Cart.objects.get(customer=request.user, is_processed=False)
+        if user_cart.products.all().count() == 0:
+            return Response({'processing_error': 'Your cart is empty'}, status=400)
         for item in user_cart.products.all():
-            pass
+            item_discount = item.item
+            item_discount = item_discount.discount
+            
+            item_price = item.item_type
+            item_price = item_price.price
 
-        pass
+            order_item_price = item_price * (1 - (item_discount / 100)) * item.quantity
+
+            final_price = final_price + order_item_price
+        user_cart.processed()
+        
+        return Response({'final_price': final_price}, status=200)
+
+    def previous_carts(self, request):
+        '''Returns all previous carts of a current user
+        '''
+        queryset = Cart.objects.filter(
+            customer=request.user, is_processed=True
+        ).order_by('-id')
+        serializer = PreviousCartListSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def preview_previous_cart(self, request, uid):
+        '''Previews previous cart with its processing date
+        '''
+        user_cart = get_object_or_404(Cart, unique_id=uid)
+        if request.user.id is not user_cart.customer.id:
+            return Response({'auth_error':'You have no permission to preview this cart'}, status=401)
+        return Response(PreviousCartSerializer(user_cart).data)

@@ -19,13 +19,23 @@ class CustomerSerializer(serializers.ModelSerializer):
         model = Customer
         fields = ('username', 'first_name', 'last_name',)
 
+class PreviousCartListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cart 
+        fields = ('unique_id', 'processing_date',)
+
 
 class CartSerializer(serializers.ModelSerializer):
     customer = CustomerSerializer()
     products = OrderItemSerializer(many=True)
     class Meta:
         model = Cart
-        fields = ('customer', 'unique_id', 'is_processed','products')
+        fields = ('customer', 'unique_id', 'is_processed','products',)
+
+class PreviousCartSerializer(CartSerializer):
+    class Meta:
+        model = Cart
+        fields = CartSerializer.Meta.fields + ('processing_date',)
 
 
 class ProcessedCartSerializer(CartSerializer):

@@ -7,6 +7,7 @@ from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils.timezone import now
 
 from products.models import Product, ProductType
 
@@ -58,10 +59,12 @@ class Cart(models.Model):
     customer = models.ForeignKey(Customer, on_delete=CASCADE)
     products = models.ManyToManyField(OrderItem, blank=True, related_name='orders_in_cart')
     is_processed = models.BooleanField(default=False)
+    processing_date = models.DateTimeField(null=True, default=None, blank=True)
 
     def __str__(self):
         return f"{self.customer}  // Processed: {self.is_processed} // {self.unique_id}"
 
     def processed(self, *args, **kwargs):
         self.is_processed = True
+        self.processing_date = now()
         return super(Cart, self).save(*args, **kwargs)
