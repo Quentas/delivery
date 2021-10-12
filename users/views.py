@@ -107,3 +107,11 @@ class CartViewSet(ViewSet):
         if request.user.id is not user_cart.customer.id:
             return Response({'auth_error':'You have no permission to preview this cart'}, status=401)
         return Response(PreviousCartSerializer(user_cart).data)
+
+
+from django.http import JsonResponse
+
+
+def ping(request):
+    data = {'ping': 'pong!'}
+    return JsonResponse(data)
