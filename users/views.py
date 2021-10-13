@@ -7,6 +7,7 @@ from django.db import transaction
 from rest_framework.viewsets import ViewSet, ModelViewSet
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.response import Response
+from django.http import JsonResponse
 from rest_framework.permissions import (
     IsAuthenticated,
     AllowAny,
@@ -107,9 +108,6 @@ class CartViewSet(ViewSet):
         if request.user.id is not user_cart.customer.id:
             return Response({'auth_error':'You have no permission to preview this cart'}, status=401)
         return Response(PreviousCartSerializer(user_cart).data)
-
-
-from django.http import JsonResponse
 
 
 def ping(request):
