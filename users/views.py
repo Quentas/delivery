@@ -8,6 +8,8 @@ from rest_framework.viewsets import ViewSet, ModelViewSet
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.response import Response
 from django.http import JsonResponse
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.permissions import (
     IsAuthenticated,
     AllowAny,
@@ -23,6 +25,7 @@ class CartViewSet(ViewSet):
             Q (is_processed = False)).get_or_create(customer = request.user)
         serializer = CartSerializer(queryset, many=False)
         return Response(serializer.data)
+
 
     @transaction.atomic
     def add_to_cart(self, request):
