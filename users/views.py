@@ -27,7 +27,6 @@ class CartViewSet(ViewSet):
         return Response(serializer.data)
 
 
-    #@swagger_auto_schema()
     @transaction.atomic
     def add_to_cart(self, request):
         '''Adds items to cart, if 'quantity' parameter is positive.
